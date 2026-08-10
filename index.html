@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no, email=no, address=no">
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="无需注册即可体验的 BTC 模拟交易游戏。">
+  <title>AI Trading Simulator V0.1</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>₿</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AI TRADING SIMULATOR · V0.1</p>
+        <h1>BTC 模拟交易台</h1>
+        <p class="subtitle">用虚拟资金体验价格波动、交易和资产变化。</p>
+      </div>
+      <div class="day-badge">第 <strong id="day">1</strong> 天</div>
+    </header>
+
+    <section class="stats-grid" aria-label="账户概览">
+      <article class="stat-card featured">
+        <span>BTC 当前价格</span>
+        <strong id="currentPrice">$100,000.00</strong>
+        <small id="dailyChange">初始价格</small>
+      </article>
+      <article class="stat-card">
+        <span>现金</span>
+        <strong id="cash">$10,000.00</strong>
+      </article>
+      <article class="stat-card">
+        <span>BTC 数量</span>
+        <strong id="btcAmount">0.000000 BTC</strong>
+      </article>
+      <article class="stat-card">
+        <span>总资产</span>
+        <strong id="totalAssets">$10,000.00</strong>
+      </article>
+      <article class="stat-card">
+        <span>收益率</span>
+        <strong id="returnRate">0.00%</strong>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <div class="panel chart-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="section-label">MARKET</p>
+            <h2>BTC 价格走势</h2>
+          </div>
+          <button id="nextDayButton" class="primary-button" type="button">下一天</button>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="priceChart" aria-label="BTC价格走势图"></canvas>
+        </div>
+      </div>
+
+      <aside class="panel trade-panel">
+        <p class="section-label">TRADE</p>
+        <h2>下单</h2>
+        <label for="tradeAmount">BTC 数量</label>
+        <input id="tradeAmount" type="number" min="0" step="0.001" placeholder="例如 0.01">
+        <div class="quick-actions" aria-label="快捷数量">
+          <button type="button" data-ratio="0.25">25%</button>
+          <button type="button" data-ratio="0.5">50%</button>
+          <button type="button" data-ratio="1">全部</button>
+        </div>
+        <div class="trade-actions">
+          <button id="buyButton" class="buy-button" type="button">买入 BTC</button>
+          <button id="sellButton" class="sell-button" type="button">卖出 BTC</button>
+        </div>
+        <p id="message" class="message" role="status">输入数量后开始模拟交易。</p>
+      </aside>
+    </section>
+
+    <section class="panel history-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-label">HISTORY</p>
+          <h2>交易记录</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>天数</th>
+              <th>操作</th>
+              <th>成交价</th>
+              <th>BTC 数量</th>
+              <th>交易金额</th>
+            </tr>
+          </thead>
+          <tbody id="tradeHistory">
+            <tr class="empty-row"><td colspan="5">暂无交易记录</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
