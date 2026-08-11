@@ -6,7 +6,7 @@
   <meta name="format-detection" content="telephone=no, email=no, address=no">
   <meta name="theme-color" content="#080b12">
   <meta name="description" content="无需注册即可体验的 BTC 模拟交易游戏。">
-  <title>AI Trading Simulator V0.1</title>
+  <title>AI Trading Simulator V0.2</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>₿</text></svg>">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,11 +14,14 @@
   <main class="app-shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">AI TRADING SIMULATOR · V0.1</p>
+        <p class="eyebrow">AI TRADING SIMULATOR · V0.2</p>
         <h1>BTC 模拟交易台</h1>
-        <p class="subtitle">用虚拟资金体验价格波动、交易和资产变化。</p>
+        <p class="subtitle">用虚拟资金体验价格波动、交易、手续费和风险控制。</p>
       </div>
-      <div class="day-badge">第 <strong id="day">1</strong> 天</div>
+      <div class="header-meta">
+        <div class="day-badge">第 <strong id="day">1</strong> 天</div>
+        <div class="date-badge"><strong id="simDate">2024-01-01</strong></div>
+      </div>
     </header>
 
     <section class="stats-grid" aria-label="账户概览">
@@ -45,6 +48,60 @@
       </article>
     </section>
 
+    <section class="panel position-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-label">POSITION</p>
+          <h2>持仓分析</h2>
+        </div>
+      </div>
+      <div class="position-grid">
+        <article class="mini-stat">
+          <span>BTC 持仓数量</span>
+          <strong id="positionQty">0.000000 BTC</strong>
+        </article>
+        <article class="mini-stat">
+          <span>平均持仓成本</span>
+          <strong id="avgCost">$0.00</strong>
+        </article>
+        <article class="mini-stat">
+          <span>当前持仓盈亏</span>
+          <strong id="positionPnl">$0.00</strong>
+        </article>
+        <article class="mini-stat">
+          <span>当前持仓盈亏%</span>
+          <strong id="positionPnlPercent">0.00%</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel benchmark-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-label">BENCHMARK</p>
+          <h2>Buy &amp; Hold 对比</h2>
+        </div>
+      </div>
+      <div class="benchmark-grid">
+        <article class="mini-stat">
+          <span>我的策略收益率</span>
+          <strong id="strategyReturn">+0.00%</strong>
+        </article>
+        <article class="mini-stat">
+          <span>Buy &amp; Hold 收益率</span>
+          <strong id="benchmarkReturn">+0.00%</strong>
+        </article>
+        <article class="mini-stat">
+          <span>策略是否跑赢</span>
+          <strong id="benchmarkStatus">持平</strong>
+        </article>
+        <article class="mini-stat">
+          <span>超额收益</span>
+          <strong id="excessReturn">+0.00%</strong>
+        </article>
+      </div>
+    </section>
+
     <section class="workspace">
       <div class="panel chart-panel">
         <div class="panel-heading">
@@ -69,6 +126,18 @@
           <button type="button" data-ratio="0.5">50%</button>
           <button type="button" data-ratio="1">全部</button>
         </div>
+
+        <div class="risk-controls">
+          <div class="input-block">
+            <label for="stopLossInput">Stop Loss %</label>
+            <input id="stopLossInput" type="number" min="0" max="100" step="0.1" value="5">
+          </div>
+          <div class="input-block">
+            <label for="takeProfitInput">Take Profit %</label>
+            <input id="takeProfitInput" type="number" min="0" max="100" step="0.1" value="10">
+          </div>
+        </div>
+
         <div class="trade-actions">
           <button id="buyButton" class="buy-button" type="button">买入 BTC</button>
           <button id="sellButton" class="sell-button" type="button">卖出 BTC</button>
@@ -88,15 +157,17 @@
         <table>
           <thead>
             <tr>
+              <th>日期</th>
               <th>天数</th>
               <th>操作</th>
               <th>成交价</th>
               <th>BTC 数量</th>
               <th>交易金额</th>
+              <th>手续费</th>
             </tr>
           </thead>
           <tbody id="tradeHistory">
-            <tr class="empty-row"><td colspan="5">暂无交易记录</td></tr>
+            <tr class="empty-row"><td colspan="7">暂无交易记录</td></tr>
           </tbody>
         </table>
       </div>
