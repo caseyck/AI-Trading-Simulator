@@ -4,176 +4,94 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
-  <meta name="theme-color" content="#080b12">
-  <meta name="description" content="无需注册即可体验的 BTC 模拟交易游戏。">
-  <title>AI Trading Simulator V0.2</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>₿</text></svg>">
+  <meta name="theme-color" content="#0a0f1a">
+  <meta name="description" content="如果回到过去，你能赚多少钱？用真实历史行情计算 ALL IN 收益。">
+  <title>AI Trading Simulator V0.3</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">AI TRADING SIMULATOR · V0.2</p>
-        <h1>BTC 模拟交易台</h1>
-        <p class="subtitle">用虚拟资金体验价格波动、交易、手续费和风险控制。</p>
-      </div>
-      <div class="header-meta">
-        <div class="day-badge">第 <strong id="day">1</strong> 天</div>
-        <div class="date-badge"><strong id="simDate">2024-01-01</strong></div>
-      </div>
-    </header>
-
-    <section class="stats-grid" aria-label="账户概览">
-      <article class="stat-card featured">
-        <span>BTC 当前价格</span>
-        <strong id="currentPrice">$100,000.00</strong>
-        <small id="dailyChange">初始价格</small>
-      </article>
-      <article class="stat-card">
-        <span>现金</span>
-        <strong id="cash">$10,000.00</strong>
-      </article>
-      <article class="stat-card">
-        <span>BTC 数量</span>
-        <strong id="btcAmount">0.000000 BTC</strong>
-      </article>
-      <article class="stat-card">
-        <span>总资产</span>
-        <strong id="totalAssets">$10,000.00</strong>
-      </article>
-      <article class="stat-card">
-        <span>收益率</span>
-        <strong id="returnRate">0.00%</strong>
-      </article>
+  <main class="v3-shell">
+    <section class="hero">
+      <p class="eyebrow">AI TRADING SIMULATOR · V0.3</p>
+      <h1>如果回到过去，你能赚多少钱？</h1>
+      <p class="subtitle">选一天，选一种币，看看如果当时 ALL IN 并一直拿到今天，会发生什么。</p>
     </section>
 
-    <section class="panel position-panel">
-      <div class="panel-heading">
-        <div>
-          <p class="section-label">POSITION</p>
-          <h2>持仓分析</h2>
+    <section class="calculator-panel" aria-label="回看收益计算器">
+      <div class="field-group">
+        <label for="amountInput">初始资金</label>
+        <div class="input-row">
+          <input id="amountInput" type="number" min="1" step="100" value="10000" inputmode="decimal">
+          <span class="unit">USDT</span>
         </div>
       </div>
-      <div class="position-grid">
-        <article class="mini-stat">
-          <span>BTC 持仓数量</span>
-          <strong id="positionQty">0.000000 BTC</strong>
-        </article>
-        <article class="mini-stat">
-          <span>平均持仓成本</span>
-          <strong id="avgCost">$0.00</strong>
-        </article>
-        <article class="mini-stat">
-          <span>当前持仓盈亏</span>
-          <strong id="positionPnl">$0.00</strong>
-        </article>
-        <article class="mini-stat">
-          <span>当前持仓盈亏%</span>
-          <strong id="positionPnlPercent">0.00%</strong>
-        </article>
+
+      <div class="field-group">
+        <label for="dateInput">历史日期</label>
+        <input id="dateInput" type="date">
+        <input id="dateTextInput" class="manual-date-input" type="text" inputmode="numeric" autocomplete="off" placeholder="YYYY-MM-DD" aria-label="手动输入历史日期">
       </div>
+
+      <div class="field-group">
+        <label for="coinSelect">币种</label>
+        <select id="coinSelect">
+          <option value="btc">BTC</option>
+          <option value="eth">ETH</option>
+          <option value="doge">DOGE</option>
+          <option value="sol">SOL</option>
+          <option value="shib">SHIB</option>
+          <option value="pepe">PEPE</option>
+          <option value="moodeng">MOODENG</option>
+          <option value="trump">TRUMP</option>
+        </select>
+      </div>
+
+      <button id="calculateButton" type="button">看看我现在有多少钱</button>
+      <p id="statusMessage" class="status-message" role="status" aria-live="polite">请选择日期和币种，计算当时 ALL IN 的真实收益。</p>
     </section>
 
-    <section class="panel benchmark-panel">
-      <div class="panel-heading">
-        <div>
-          <p class="section-label">BENCHMARK</p>
-          <h2>Buy &amp; Hold 对比</h2>
-        </div>
+    <section id="resultPanel" class="result-panel hidden" aria-live="polite">
+      <div class="result-flow">
+        <div class="result-step muted-value"><span id="initialValue">$10,000.00</span></div>
+        <div class="arrow">↓</div>
+        <div class="result-step accent-value"><span id="boughtQty">0 BTC</span></div>
+        <div class="arrow">↓</div>
+        <div class="result-step muted-value"><span id="holdingStatus">持有至今天</span></div>
+        <div class="arrow">↓</div>
+        <div class="result-step highlight-value"><span id="currentValue">$0.00</span></div>
       </div>
-      <div class="benchmark-grid">
-        <article class="mini-stat">
-          <span>我的策略收益率</span>
-          <strong id="strategyReturn">+0.00%</strong>
-        </article>
-        <article class="mini-stat">
-          <span>Buy &amp; Hold 收益率</span>
-          <strong id="benchmarkReturn">+0.00%</strong>
-        </article>
-        <article class="mini-stat">
-          <span>策略是否跑赢</span>
-          <strong id="benchmarkStatus">持平</strong>
-        </article>
-        <article class="mini-stat">
-          <span>超额收益</span>
-          <strong id="excessReturn">+0.00%</strong>
-        </article>
-      </div>
-    </section>
 
-    <section class="workspace">
-      <div class="panel chart-panel">
-        <div class="panel-heading">
-          <div>
-            <p class="section-label">MARKET</p>
-            <h2>BTC 价格走势</h2>
-          </div>
-          <button id="nextDayButton" class="primary-button" type="button">下一天</button>
+      <div class="profit-box">
+        <p class="profit-label">你赚了</p>
+        <div id="profit" class="profit-amount positive">+$0.00</div>
+        <div id="returnRate" class="profit-rate positive">+0.00%</div>
+      </div>
+
+      <div class="meta-grid" aria-label="价格详情">
+        <div class="meta-item">
+          <span>买入日期</span>
+          <strong id="buyDate">—</strong>
         </div>
-        <div class="chart-wrap">
-          <canvas id="priceChart" aria-label="BTC价格走势图"></canvas>
+        <div class="meta-item">
+          <span>当日真实价格</span>
+          <strong id="historicalPrice">—</strong>
+        </div>
+        <div class="meta-item">
+          <span>当前价格</span>
+          <strong id="currentPrice">—</strong>
+        </div>
+        <div class="meta-item">
+          <span>当前价格更新时间</span>
+          <strong id="priceUpdatedAt">—</strong>
         </div>
       </div>
 
-      <aside class="panel trade-panel">
-        <p class="section-label">TRADE</p>
-        <h2>下单</h2>
-        <label for="tradeAmount">BTC 数量</label>
-        <input id="tradeAmount" type="number" min="0" step="0.001" placeholder="例如 0.01">
-        <div class="quick-actions" aria-label="快捷数量">
-          <button type="button" data-ratio="0.25">25%</button>
-          <button type="button" data-ratio="0.5">50%</button>
-          <button type="button" data-ratio="1">全部</button>
-        </div>
-
-        <div class="risk-controls">
-          <div class="input-block">
-            <label for="stopLossInput">Stop Loss %</label>
-            <input id="stopLossInput" type="number" min="0" max="100" step="0.1" value="5">
-          </div>
-          <div class="input-block">
-            <label for="takeProfitInput">Take Profit %</label>
-            <input id="takeProfitInput" type="number" min="0" max="100" step="0.1" value="10">
-          </div>
-        </div>
-
-        <div class="trade-actions">
-          <button id="buyButton" class="buy-button" type="button">买入 BTC</button>
-          <button id="sellButton" class="sell-button" type="button">卖出 BTC</button>
-        </div>
-        <p id="message" class="message" role="status">输入数量后开始模拟交易。</p>
-      </aside>
-    </section>
-
-    <section class="panel history-panel">
-      <div class="panel-heading">
-        <div>
-          <p class="section-label">HISTORY</p>
-          <h2>交易记录</h2>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>日期</th>
-              <th>天数</th>
-              <th>操作</th>
-              <th>成交价</th>
-              <th>BTC 数量</th>
-              <th>交易金额</th>
-              <th>手续费</th>
-            </tr>
-          </thead>
-          <tbody id="tradeHistory">
-            <tr class="empty-row"><td colspan="7">暂无交易记录</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <p class="source-line">历史价格按当日 UTC 日线收盘价计算。数据来源：<span id="sourceName">—</span>；价格口径为 USDT/USD 等值，基于公开行情数据计算。</p>
+      <p id="riskWarning" class="risk-line hidden">早期市场流动性可能较低，本结果为理论收益，暂未计入滑点、手续费及市场深度影响。</p>
     </section>
   </main>
 
+  <script src="early-history.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
