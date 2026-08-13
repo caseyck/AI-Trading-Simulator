@@ -262,6 +262,13 @@ input:focus, select:focus {
   font-weight: 800;
 }
 
+.profit-multiple {
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 900;
+}
+
 .positive {
   color: var(--green) !important;
 }

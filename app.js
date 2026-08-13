@@ -12,7 +12,7 @@ const ASSET_CONFIG = {
     name: "Bitcoin",
     chain: "Bitcoin",
     contract: "—",
-    earliestReliableDate: "2013-04-29",
+    earliestReliableDate: "2017-08-17",
     historicalSource: "Binance 1d Kline",
     currentSource: "/api/binance",
     earlyMarketWarning: "日期早于可靠市场覆盖区间时，系统只显示真实数据，不编造价格。"
@@ -23,7 +23,7 @@ const ASSET_CONFIG = {
     name: "Ethereum",
     chain: "Ethereum",
     contract: "—",
-    earliestReliableDate: "2015-08-07",
+    earliestReliableDate: "2017-08-17",
     historicalSource: "Binance 1d Kline",
     currentSource: "/api/binance",
     earlyMarketWarning: "日期早于可靠市场覆盖区间时，系统只显示真实数据，不编造价格。"
@@ -34,7 +34,7 @@ const ASSET_CONFIG = {
     name: "Dogecoin",
     chain: "Dogecoin",
     contract: "—",
-    earliestReliableDate: "2014-12-15",
+    earliestReliableDate: "2019-07-05",
     historicalSource: "Binance 1d Kline",
     currentSource: "/api/binance",
     earlyMarketWarning: "日期早于可靠市场覆盖区间时，系统只显示真实数据，不编造价格。"
@@ -56,7 +56,7 @@ const ASSET_CONFIG = {
     name: "Shiba Inu",
     chain: "Ethereum",
     contract: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-    earliestReliableDate: "2021-01-01",
+    earliestReliableDate: "2021-05-10",
     historicalSource: "Binance 1d Kline",
     currentSource: "/api/binance",
     earlyMarketWarning: "如果该日期没有可靠现货价格，页面将提示相邻日期重试，不会伪造数据。"
@@ -67,7 +67,7 @@ const ASSET_CONFIG = {
     name: "Pepe",
     chain: "Ethereum",
     contract: "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
-    earliestReliableDate: "2023-04-14",
+    earliestReliableDate: "2023-05-05",
     historicalSource: "Binance 1d Kline",
     currentSource: "/api/binance",
     earlyMarketWarning: "如果该日期没有可靠现货价格，页面将提示相邻日期重试，不会伪造数据。"
@@ -81,7 +81,8 @@ const ASSET_CONFIG = {
     earliestReliableDate: "2024-09-11",
     historicalSource: "Binance 1d Kline (待定向市场验证)",
     currentSource: "/api/binance",
-    earlyMarketWarning: "该币种仍需按真实市场覆盖条件验证，缺失可靠价格时不编造。"
+    earlyMarketWarning: "该币种仍需按真实市场覆盖条件验证，缺失可靠价格时不编造。",
+    unsupportedMessage: "MOODENG 暂未接入可靠历史数据源，敬请期待。"
   },
   trump: {
     symbol: "TRUMPUSDT",
@@ -89,7 +90,7 @@ const ASSET_CONFIG = {
     name: "Official Trump",
     chain: "Solana",
     contract: "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
-    earliestReliableDate: "2025-01-17",
+    earliestReliableDate: "2025-01-19",
     historicalSource: "Binance 1d Kline (待定向市场验证)",
     currentSource: "/api/binance",
     earlyMarketWarning: "该币种仍需按真实市场覆盖条件验证，缺失可靠价格时不编造。"
@@ -118,6 +119,7 @@ const elements = {
   currentValue: document.querySelector("#currentValue"),
   profit: document.querySelector("#profit"),
   returnRate: document.querySelector("#returnRate"),
+  multiple: document.querySelector("#multiple"),
   buyDate: document.querySelector("#buyDate"),
   historicalPrice: document.querySelector("#historicalPrice"),
   currentPrice: document.querySelector("#currentPrice"),
@@ -229,10 +231,10 @@ function validateDateString(dateString) {
     throw new Error("INVALID_DATE");
   }
 
-  const today = new Date();
-  const selectedEndOfDay = new Date(date);
-  selectedEndOfDay.setUTCDate(selectedEndOfDay.getUTCDate() + 1);
-  if (selectedEndOfDay > today) {
+  const now = new Date();
+  const todayStartUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+  const selectedStartUtc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0);
+  if (selectedStartUtc > todayStartUtc) {
     throw new Error("FUTURE_DATE");
   }
 
@@ -318,7 +320,13 @@ async function fetchHistoricalPrice(asset, dateString) {
     throw error;
   }
 
-  const candle = candles[candles.length - 1];
+  const candle = candles.find((item) => Number(item[0]) === startMs);
+  if (!candle) {
+    const error = new Error("NO_HISTORY_DATA");
+    error.userMessage = EARLY_HISTORY_ERROR;
+    throw error;
+  }
+
   const historicalPrice = Number(candle[4]);
 
   if (!Number.isFinite(historicalPrice) || historicalPrice <= 0) {
@@ -373,6 +381,8 @@ function renderResult(result, coinLabel, dateString, historicalInfo, currentInfo
   elements.initialValue.textContent = formatMoney(result.initialAmount);
   elements.boughtQty.textContent = `${formatTokenAmount(result.quantity)} ${coinLabel}`;
   elements.holdingStatus.textContent = "持有至今天";
+  const multiple = result.initialAmount > 0 ? result.currentValue / result.initialAmount : 0;
+  elements.multiple.textContent = `${multiple.toFixed(2)}×`;
   elements.currentValue.textContent = formatMoney(result.currentValue);
   elements.profit.textContent = formatSignedMoney(result.profit);
   elements.profit.classList.toggle("positive", isPositive);
@@ -409,6 +419,14 @@ async function handleCalculate() {
     validateDateString(dateString);
 
     const asset = getAsset(selectedCoinKey);
+
+    if (asset.unsupportedMessage) {
+      setStatus(asset.unsupportedMessage, "error");
+      elements.resultPanel.classList.add("hidden");
+      elements.riskWarning.classList.add("hidden");
+      return;
+    }
+
     const [historicalInfo, currentInfo] = await Promise.all([
       fetchHistoricalPrice(asset, dateString),
       fetchCurrentPrice(asset.symbol)
