@@ -118,11 +118,6 @@ input, select {
   outline: none;
 }
 
-.manual-date-input {
-  margin-top: 10px;
-  background: rgba(8, 13, 20, 0.9);
-}
-
 input:focus, select:focus {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(124, 184, 255, 0.12);

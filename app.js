@@ -108,7 +108,6 @@ const state = {
 const elements = {
   amountInput: document.querySelector("#amountInput"),
   dateInput: document.querySelector("#dateInput"),
-  dateTextInput: document.querySelector("#dateTextInput"),
   coinSelect: document.querySelector("#coinSelect"),
   calculateButton: document.querySelector("#calculateButton"),
   statusMessage: document.querySelector("#statusMessage"),
@@ -180,31 +179,6 @@ function formatDateInput(date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-}
-
-function normalizeManualDate(value) {
-  if (!value || typeof value !== "string") {
-    return "";
-  }
-
-  const trimmed = value.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-    return "";
-  }
-
-  const date = new Date(`${trimmed}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return formatDateInput(date);
-}
-
-function syncDateFieldValue(value) {
-  const normalized = normalizeManualDate(value) || value || "";
-  elements.dateInput.value = normalized;
-  elements.dateTextInput.value = normalized;
-  return normalized;
 }
 
 function setStatus(message, type = "neutral") {
@@ -467,30 +441,13 @@ function initialize() {
   const defaultDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
 
   elements.amountInput.value = String(state.initialAmount);
-  syncDateFieldValue(formatDateInput(defaultDate));
+  elements.dateInput.value = formatDateInput(defaultDate);
   elements.coinSelect.value = state.selectedCoin;
   elements.dateInput.max = formatDateInput(today);
-  elements.dateTextInput.max = formatDateInput(today);
 
   elements.calculateButton.addEventListener("click", handleCalculate);
   elements.coinSelect.addEventListener("change", () => {
     state.selectedCoin = elements.coinSelect.value;
-  });
-  elements.dateInput.addEventListener("change", () => {
-    syncDateFieldValue(elements.dateInput.value);
-  });
-  elements.dateTextInput.addEventListener("input", () => {
-    const value = normalizeManualDate(elements.dateTextInput.value);
-    if (value) {
-      elements.dateInput.value = value;
-    }
-    elements.dateTextInput.value = elements.dateTextInput.value.replace(/[^\d-]/g, "");
-  });
-  elements.dateTextInput.addEventListener("blur", () => {
-    const value = normalizeManualDate(elements.dateTextInput.value);
-    if (value) {
-      syncDateFieldValue(value);
-    }
   });
 
   setStatus("请选择日期和币种，计算当时 ALL IN 的真实收益。", "neutral");
