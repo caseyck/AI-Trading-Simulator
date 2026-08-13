@@ -108,6 +108,8 @@ const state = {
 const elements = {
   amountInput: document.querySelector("#amountInput"),
   dateInput: document.querySelector("#dateInput"),
+  datePickerButton: document.querySelector("#datePickerButton"),
+  nativeDatePicker: document.querySelector("#nativeDatePicker"),
   coinSelect: document.querySelector("#coinSelect"),
   calculateButton: document.querySelector("#calculateButton"),
   statusMessage: document.querySelector("#statusMessage"),
@@ -443,9 +445,27 @@ function initialize() {
   elements.amountInput.value = String(state.initialAmount);
   elements.dateInput.value = formatDateInput(defaultDate);
   elements.coinSelect.value = state.selectedCoin;
-  elements.dateInput.max = formatDateInput(today);
+  elements.nativeDatePicker.value = elements.dateInput.value;
+  elements.nativeDatePicker.max = formatDateInput(today);
 
   elements.calculateButton.addEventListener("click", handleCalculate);
+  elements.datePickerButton.addEventListener("click", () => {
+    const typedDate = elements.dateInput.value.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(typedDate)) {
+      elements.nativeDatePicker.value = typedDate;
+    }
+
+    if (typeof elements.nativeDatePicker.showPicker === "function") {
+      elements.nativeDatePicker.showPicker();
+    } else {
+      elements.nativeDatePicker.click();
+    }
+  });
+  elements.nativeDatePicker.addEventListener("change", () => {
+    if (elements.nativeDatePicker.value) {
+      elements.dateInput.value = elements.nativeDatePicker.value;
+    }
+  });
   elements.coinSelect.addEventListener("change", () => {
     state.selectedCoin = elements.coinSelect.value;
   });

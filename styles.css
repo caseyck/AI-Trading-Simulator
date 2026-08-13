@@ -107,6 +107,48 @@ h1 {
   gap: 10px;
 }
 
+.date-input-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.date-picker-button {
+  min-width: 104px;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(124, 184, 255, 0.08);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.date-picker-button:focus-visible {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 184, 255, 0.12);
+}
+
+.native-date-picker {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 104px;
+  height: 52px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.field-hint {
+  margin: 7px 2px 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
 input, select {
   width: 100%;
   height: 52px;
@@ -359,6 +401,16 @@ input:focus, select:focus {
   .input-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .date-input-row {
+    grid-template-columns: minmax(0, 1fr) 96px;
+    gap: 8px;
+  }
+
+  .date-picker-button {
+    min-width: 96px;
+    padding: 0 10px;
   }
 
   .unit {

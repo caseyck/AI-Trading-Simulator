@@ -28,7 +28,22 @@
 
       <div class="field-group">
         <label for="dateInput">历史日期</label>
-        <input id="dateInput" type="date">
+        <div class="date-input-row">
+          <input
+            id="dateInput"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="10"
+            placeholder="YYYY-MM-DD"
+            aria-describedby="dateInputHint"
+          >
+          <button id="datePickerButton" class="date-picker-button" type="button" aria-label="打开日期选择器">
+            选择日期
+          </button>
+          <input id="nativeDatePicker" class="native-date-picker" type="date" tabindex="-1" aria-hidden="true">
+        </div>
+        <p id="dateInputHint" class="field-hint">可直接输入 YYYY-MM-DD，或使用日期选择器。</p>
       </div>
 
       <div class="field-group">
