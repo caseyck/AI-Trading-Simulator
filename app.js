@@ -1,6 +1,6 @@
 "use strict";
 
-const API_BASE = "/api/binance";
+const API_BASE = "https://ai-trading-simulator-d2a38e344b1-1305538550.ap-shanghai.app.tcloudbase.com/api/binance";
 const HISTORY_PRICE_LOGIC = "当日 UTC 日线收盘价";
 const EARLY_HISTORY_ERROR = "该日期暂无可靠历史价格，请尝试相邻日期。";
 const EARLY_STAGE_WARNING = "早期市场流动性可能较低，本结果为理论收益，暂未计入滑点、手续费及市场深度影响。";
